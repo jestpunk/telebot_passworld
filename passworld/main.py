@@ -1,11 +1,14 @@
 import telebot
 import sys
-from loguru import logger
+from loguru import logger as log
 from commands import command
 from functools import wraps
 
-logger.add("../logs/log", level="TRACE", rotation="1 day", compression="zip")
-logger.info("Start logging")
+log.remove()
+log.add(sys.stdout, level="TRACE")
+
+log.add("../logs/{time}.log", level="TRACE", rotation="1 day", compression="zip")
+log.info("Start logging")
 
 try:
     BOT_TOKEN = sys.argv[1]
@@ -13,7 +16,7 @@ except:
     print(
         "USAGE:\n\tpoetry run python3 main.py $(cat ../BOT_TOKEN)\nor\n\t. ./startbot.sh"
     )
-logger.info(f"Bot token = {BOT_TOKEN}")
+log.info(f"Bot token = {BOT_TOKEN}")
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -21,9 +24,9 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def trace_log(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        logger.info(f"start {f.__name__}")
+        log.trace(f"start {wrapper.__name__}")
         res = f(*args, **kwargs)
-        logger.info(f"end {f.__name__}")
+        log.trace(f"end {wrapper.__name__}")
         return res
 
     return wrapper
