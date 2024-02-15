@@ -3,7 +3,8 @@ import sys
 from loguru import logger as log
 from commands import command
 from functools import wraps
-
+from keyboards import start_screen_keyboard
+ 
 log.remove()
 log.add(sys.stdout, level="TRACE")
 
@@ -36,7 +37,9 @@ def trace_log(f):
 @trace_log
 def start_screen(message):
     text = f"Hello, {message.from_user.username}"
-    sent = bot.send_message(message.from_user.id, text)
+    sent = bot.send_message(message.from_user.id,
+                            text,
+                            reply_markup=start_screen_keyboard)
 
 
 bot.polling(none_stop=True, interval=0)
